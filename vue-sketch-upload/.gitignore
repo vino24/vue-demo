@@ -1,0 +1,23 @@
+# general
+*~
+*.log
+tmp
+dump
+**/.DS_Store
+.svn/
+.idea/
+.metadata/
+RemoteSystemsTempFiles/
+.project
+Thumbs.db
+*.iml
+
+#node
+**/node_modules/
+
+#bower
+**/bower_components
+
+#sublime project config file
+**/*.sublime-project
+**/*.sublime-workspace

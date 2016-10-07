@@ -1,0 +1,110 @@
+{
+  "_args": [
+    [
+      "vue-upload-component",
+      "/Users/vino/Public/vue-demo/vue-upload"
+    ]
+  ],
+  "_cnpm_publish_time": 1469151492205,
+  "_from": "vue-upload-component@*",
+  "_id": "vue-upload-component@0.3.6",
+  "_inCache": true,
+  "_location": "/vue-upload-component",
+  "_nodeVersion": "4.2.1",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/vue-upload-component-0.3.6.tgz_1469151489841_0.4625327726826072"
+  },
+  "_npmUser": {
+    "email": "admin@lianyue.org",
+    "name": "lianyue"
+  },
+  "_npmVersion": "3.10.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "vue-upload-component",
+    "raw": "vue-upload-component",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "http://registry.npm.taobao.org/vue-upload-component/download/vue-upload-component-0.3.6.tgz",
+  "_shasum": "6b466c6627735dc98a9a322093ecc04ed972a035",
+  "_shrinkwrap": null,
+  "_spec": "vue-upload-component",
+  "_where": "/Users/vino/Public/vue-demo/vue-upload",
+  "author": {
+    "name": "LianYue"
+  },
+  "bugs": {
+    "url": "https://github.com/lian-yue/vue-upload-component/issues"
+  },
+  "dependencies": {},
+  "description": "Vue.js file upload component, Support for multiple file uploads, progress, html5, html4, support ie9",
+  "devDependencies": {
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.0.0",
+    "babel-plugin-transform-runtime": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0",
+    "babel-preset-stage-2": "^6.0.0",
+    "babel-runtime": "^6.0.0",
+    "cross-env": "^1.0.6",
+    "css-loader": "^0.23.0",
+    "file-loader": "^0.8.4",
+    "json-loader": "^0.5.4",
+    "url-loader": "^0.5.7",
+    "vue": "^1.0.26",
+    "vue-hot-reload-api": "^1.2.0",
+    "vue-html-loader": "^1.0.0",
+    "vue-loader": "^8.2.1",
+    "vue-style-loader": "^1.0.0",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.12.0"
+  },
+  "directories": {},
+  "dist": {
+    "noattachment": false,
+    "shasum": "6b466c6627735dc98a9a322093ecc04ed972a035",
+    "size": 298313,
+    "tarball": "http://registry.npm.taobao.org/vue-upload-component/download/vue-upload-component-0.3.6.tgz"
+  },
+  "gitHead": "58267e3c0bfe8b4e98b861303bac2f1253880bab",
+  "homepage": "https://github.com/lian-yue/vue-upload-component#readme",
+  "keywords": [
+    "component",
+    "file",
+    "multiple",
+    "put",
+    "upload",
+    "uploads",
+    "vue-component",
+    "vue-file-upload",
+    "vue-file-upload-component",
+    "vue-upload-component",
+    "vue.js"
+  ],
+  "license": "Apache-2.0",
+  "main": "dist/vue-upload-component.js",
+  "maintainers": [
+    {
+      "name": "lianyue",
+      "email": "admin@lianyue.org"
+    }
+  ],
+  "name": "vue-upload-component",
+  "optionalDependencies": {},
+  "publish_time": 1469151492205,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lian-yue/vue-upload-component.git"
+  },
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules --config  webpack.config.build.min.js && cross-env NODE_ENV=production webpack --progress --hide-modules --config  webpack.config.build.js && cross-env NODE_ENV=production webpack --progress --hide-modules --config  webpack.config.js",
+    "dev": "webpack-dev-server --inline --hot"
+  },
+  "version": "0.3.6"
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sketch上传页面</title>
+    <style type="text/css">
+    #app {
+        position: relative;
+        margin: 30px;
+    }
+    
+    #result {
+        text-align: center;
+        font-family: monospace;
+        margin-top: 30px;
+    }
+    
+    .file-upload {
+        display: block;
+        cursor: pointer;
+    }
+    
+    .file-upload span {
+        display: block;
+        font-size: 16px;
+        padding: 1em;
+        margin: 0 30px 0 0;
+        font-weight: bold;
+        border: 1px solid rgba(0, 0, 0, .075);
+    }
+    
+    .drop-active {
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        position: absolute;
+        opacity: .4;
+        background: #000;
+    }
+    
+    .close-btn {
+        cursor: pointer;
+    }
+    
+    .file-upload-container {
+        width: 500px;
+    }
+    </style>
+    <link href="//cdn.bootcss.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <table style="width: 100%;" class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>索引</th>
+                    <th>ID</th>
+                    <th>文件名</th>
+                    <th>大小</th>
+                    <th>上传进度</th>
+                    <!-- <th>错误提示</th>
+                    <th>成功提示</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="file in files">
+                    <td>{{$index}}</td>
+                    <td>{{file.id}}</td>
+                    <td>{{file.name}}</td>
+                    <td>{{file.size | formatSize}}</td>
+                    <td>{{file.progress}}</td>
+                    <!--         <td>{{file.error}}</td>
+                    <td>{{file.success}}</td>
+                    <td @click="remove(file)" class="close-btn">x</td> -->
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        <table style="width: 100%;" class="table-condensed">
+            <tbody>
+                <tr class="file-upload-container">
+                    <td>
+                        <file-upload title="添加文件" class="file-upload" name="avatar" post-action="./profile" :extensions="extensions" :accept="accept" :size="size" v-ref:upload :drop="drop"></file-upload>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" v-if="upload.active" type="submit" @click.prevent="$refs.upload.active = !$refs.upload.active">停止上传</button>
+                        <button class="btn btn-primary" :class="{ 'disabled': files.length ==0 }" v-else type="submit" @click.prevent="$refs.upload.active = !$refs.upload.active">开始上传</button>
+                    </td>
+                    <!--                     <td>
+                        <label>Auto start: <input type="checkbox" id="checkbox" v-model="auto"></label>
+                    </td>
+                    <td>
+                   <label>
+                            Multiple: <input type="checkbox" id="checkbox" v-model="multiple">
+                    </label>
+                    </td> -->
+                </tr>
+            </tbody>
+        </table>
+        <div v-show="$refs.upload.dropActive" class="drop-active">
+            Drop ing
+        </div>
+        <pre id="result">{{info}}</pre>
+    </div>
+    <script type="text/javascript" src="dist/vendors.js"></script>
+    <script type="text/javascript" src="dist/app.18283017a0240b785903.js"></script>
+</body>
+
+</html>

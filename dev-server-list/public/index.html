@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="utf-8">
+    <title>调试服务列表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet">
+    <link href="//res.winbaoxian.com/legacy/CDN/mint-ui.css" rel="stylesheet">
+    <style>
+        *, :after, :before {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .container {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .top-msg {
+            color: #276f86;
+            position: relative;
+            margin-top: 1em;
+            padding: 1em 1.5em;
+            line-height: 1.4285em;
+            border-radius: .28571429rem;
+            box-shadow: 0 0 0 1px #a9d5de inset, 0 0 0 0 transparent;
+        }
+
+        .control-buttons {
+            position: absolute;
+            top: 2em;
+            right: -1em;
+            z-index: 9999;
+        }
+
+        .button {
+            cursor: pointer;
+            min-height: 1em;
+            outline: 0;
+            border: none;
+            margin: 0 .25em 0 0;
+            line-height: 1em;
+            box-shadow: 0 0 0 1px transparent inset, 0 0 0 0 rgba(34, 36, 38, .15) inset;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .circular.button {
+            border-radius: 10em;
+            color: #fff;
+            padding: .78571429em;
+        }
+
+        .blue {
+            background-color: #2185d0;
+        }
+
+        .orange {
+            background-color: #f2711c;
+        }
+
+        .inverted.button {
+            background-color: transparent;
+            box-shadow: 0 0 0 2px #54c8ff inset !important;
+            color: #54c8ff;
+        }
+
+        .fa-plus, .fa-pencil-square-o {
+            width: 14px;
+            height: 14px;
+        }
+
+        .fa-plus:before {
+            position: relative;
+            top: 2px;
+        }
+
+        .fa-pencil-square-o:before {
+            position: relative;
+            top: 2px;
+            left: 1px;
+        }
+
+        .segment {
+            border: 1px solid rgb(212, 212, 213);
+            border-radius: 5px;
+            padding: .8em;
+            margin-top: 1em;
+        }
+
+        .opt span {
+            cursor: pointer;
+            color: #4183c4;
+        }
+
+        .opt span:first-child {
+            margin-right: 5px;
+        }
+
+        .container .mint-popup {
+            width: 85%;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .item .mint-cell:after, .field .mint-cell:after {
+            border-top: none;
+        }
+
+        .item .mint-cell a {
+            left: 10px;
+        }
+
+        .list .item:last-child .mint-cell:before {
+            border-bottom: none;
+        }
+
+        .mint-popup .header {
+            font-size: 1.4em;
+            padding-bottom: .8em;
+            border-bottom: 1px solid rgba(34, 36, 38, .15);
+        }
+
+        .content .field {
+            margin-top: 1em;
+        }
+
+        .mint-popup label.mint-cell-title {
+            display: none;
+        }
+
+        .field.error {
+            color: #9f3a38;
+        }
+
+        .field > label {
+            font-size: .8em;
+        }
+
+        .field.error input::-webkit-input-placeholder {
+            color: #e7bdbc;
+        }
+
+        .field.error input::-moz-placeholder {
+            color: #e7bdbc;
+        }
+
+        .field.error input:-ms-input-placeholder {
+            color: #e7bdbc;
+        }
+
+        .mint-popup .actions {
+            margin-top: 20px;
+        }
+
+        .mint-popup .actions button:first-child {
+            margin-right: 20px;
+        }
+
+        .actions .checkmark {
+            margin-left: 10px;
+        }
+
+        .f-pr {
+            position: relative;
+        }
+
+        .f-pa {
+            position: absolute;
+        }
+
+        .f-fr {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container" id="container">
+    <div class="top-msg">
+        欢迎来到调试服务器列表
+            <span class="control-buttons">
+                <button class="circular blue button" @click="toggleCollapse(true)" v-show="!inEdit"
+                        :class="{inverted: !isCollapsed}"><i class="fa fa-pencil-square-o"
+                                                             aria-hidden="true"></i></button>
+            <button class="circular orange button" @click="toggleEdit(true)" v-show="!inEdit"><i
+                    class="fa fa-plus" aria-hidden="true"></i></button>
+            </span>
+    </div>
+    <div class="warning message" v-for="msg in msgs.warning">
+        {{msg}}
+    </div>
+    <div class="segment">
+        <div class="list">
+            <div class="item f-pr" v-for="endpoint in endpointList" track-by="id">
+                <mt-cell>
+                    <a :href="endpoint.url" class="f-pa">{{endpoint.desc}} </a>
+                    <div class="content"><span
+                            class="opt f-fr" v-if="!isCollapsed"><span @click="edit(endpoint)">编辑</span><span
+                            @click="del(endpoint)">删除</span></span></div>
+                </mt-cell>
+            </div>
+        </div>
+    </div>
+    <mt-popup :visible.sync="inEdit" popup-transition="popup-fade">
+        <div class="header">
+            添加一个服务器
+        </div>
+        <div class="content">
+            <form class="form">
+                <div class="field {{ hasDescValid }}">
+                    <label>描述 {{hasDescValid === 'error' ? '20字内的中英文数字空格及连字符' : ''}}</label>
+                    <mt-field placeholder="请输入描述" :value.sync="newEndPointInfo.desc" type="text"
+                              :state="hasDescValid"></mt-field>
+                </div>
+                <div class="field {{ hasUrlValid }}">
+                    <label>URL {{hasUrlValid === 'error' ? '请输入正确的UR' : ''}}</label>
+                    <mt-field placeholder="请输入URL" type="url" :value.sync="newEndPointInfo.url"
+                              :state="hasUrlValid"></mt-field>
+                </div>
+                <div class="field {{ hasOwnerValid }}">
+                    <label>持有人 {{hasOwnerValid === 'error' ? '20字内的中英文数字空格及连字符' : ''}}</label>
+                    <mt-field placeholder="请输入持有人或联系人姓名" :value.sync="newEndPointInfo.owner" type="text"
+                              :state="hasOwnerValid"></mt-field>
+                </div>
+            </form>
+        </div>
+        <div class="actions f-fr">
+            <mt-button size="small" type="default" @click="toggleEdit(false)" :disabled="isWritingBack">
+                取消
+            </mt-button>
+            <mt-button size="small" type="primary" @click="confirmAdd()"
+                       :disabled="isWritingBack || hasDescValid === 'error' || hasUrlValid === 'error' || hasOwnerValid === 'error'">
+                确认添加<i
+                    class="checkmark icon"></i>
+            </mt-button>
+        </div>
+    </mt-popup>
+</div>
+<script src="http://cdn.bootcss.com/es6-promise/3.2.2/es6-promise.min.js"></script>
+<script src="http://cdn.bootcss.com/fetch/1.0.0/fetch.min.js"></script>
+<script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
+<script src="//res.winbaoxian.com/legacy/CDN/mint-ui-1.0.js"></script>
+<script>
+    var baseUrl = location.origin,
+            urlRule = /^(http|ftp|https):\/\/[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)+([A-Za-z0-9_.,@?^=%&amp;:\/~+#-]*[A-Za-z0-9_@?^=%&amp;\/~+#-])?$/,
+            realnameRule = /^[\u4e00-\u9fa5a-zA-Z\- 0-9]{1,20}$/;
+    var uiData = {
+        msgs: {
+            warning: []
+        },
+        endpointList: [],
+        newEndPointInfo: {},
+        inEdit: false,
+        isWritingBack: false,
+        isCollapsed: true,
+    };
+
+    function showWarning(txt) {
+        uiData.msgs.warning.push(txt);
+    }
+
+    function checkStatus(response) {
+        if (response.status >= 200 && response.status < 300) {
+            return response
+        } else {
+            var error = new Error(response.statusText)
+            error.response = response
+            throw error
+        }
+    }
+
+    function parseJSON(response) {
+        return response.json()
+    }
+    function getReqObj(method) {
+        var obj = {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin",
+            method: method,
+        };
+        var len = arguments.length;
+        if (len > 1) obj.body = arguments[1];
+        return obj;
+    }
+
+    function addServer(serverInfo) {
+        return fetch(baseUrl + '/api/list', getReqObj("POST", JSON.stringify(serverInfo)));
+    }
+
+    function delSever(id) {
+        return fetch(baseUrl + '/api/list/' + id, getReqObj("DELETE"));
+    }
+    function validate(attr, rule) {
+        var info = uiData.newEndPointInfo;
+        return info.hasOwnProperty(attr) && rule.test(info[attr]) ? 'success' : 'error';
+    }
+
+    function initPage() {
+        var vueInst = new Vue({
+            el: '#container',
+            data: uiData,
+            components: {
+                mtCell: MINT.Cell,
+                mtPopup: MINT.Popup
+            },
+            computed: {
+                hasDescValid: function () {
+                    return validate('desc', realnameRule);
+                },
+                hasUrlValid: function () {
+                    return validate('url', urlRule);
+                },
+                hasOwnerValid: function () {
+                    return validate('owner', realnameRule);
+                },
+            },
+            methods: {
+                refresh: function () {
+                    fetch(baseUrl + '/api/list')
+                            .then(checkStatus)
+                            .then(parseJSON)
+                            .then(function (response) {
+                                // console.dir(response);
+                                uiData.endpointList = response;
+                            }).catch(function (error) {
+                        showWarning('从服务器获取名单列表失败：' + error.message);
+                    });
+                },
+                toggleEdit: function (isInEdit) {
+                    uiData.inEdit = isInEdit;
+                    this.newEndPointInfo = {};
+                },
+                toggleCollapse: function () {
+                    uiData.isCollapsed = !uiData.isCollapsed;
+                },
+                del: function (item) {
+                    var index = uiData.endpointList.indexOf(item);
+                    uiData.endpointList.splice(index, 1);
+                    var that = this;
+                    delSever(item.id).then(function () {
+                        uiData.isWritingBack = false;
+                        that.toggleEdit(false);
+                        that.refresh();
+                    }).catch(function (error) {
+                        showWarning(error.message)
+                    });
+                },
+                edit: function (item) {
+//                    uiData.newEndPointInfo.desc = 'aaa';
+                    uiData.newEndPointInfo = Object.assign({}, uiData.newEndPointInfo, item);
+//                    this.$set('newEndPointInfo.desc', 'aaa');
+//                    Vue.set(uiData, 'newEndPointInfo.desc', 'aaa');
+                    uiData.inEdit = true;
+                },
+                confirmAdd: function () {
+                    var me = this;
+
+                    uiData.isWritingBack = true;
+                    if (!uiData.inEdit) {
+                        uiData.isWritingBack = false;
+                        return;
+                    }
+                    addServer(uiData.newEndPointInfo).then(function () {
+                        uiData.isWritingBack = false;
+                        me.newEndPointInfo = {};
+                        me.toggleEdit(false);
+                        me.refresh();
+                    }).catch(function (error) {
+                        showWarning(error.message)
+                    });
+                },
+            },
+            ready: function () {
+                this.refresh();
+            }
+        });
+    }
+
+    window.initPage();
+</script>
+</body>
+</html>
