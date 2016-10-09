@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>帖子详情</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <link rel="stylesheet" href="vue-toast.min.css" charset="UTF-8">
+    <!-- iconfont -->
+    <link href="//res.winbaoxian.com/iconfont/1475062634354/css/symbols.css" rel="stylesheet">
+    <style>
+        /*
+            reset
+        */
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F8F9FB;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
+
+        /*
+            native header
+        */
+        #header {
+            font-size: 1rem;
+            width: 100%;
+            height: 44px;
+            display: none;
+            background: #fff;
+            border-bottom: #eee 1px solid;
+            line-height: 44px;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10000
+        }
+
+        #header .back {
+            position: absolute;
+            width: 44px;
+            height: 30px;
+            left: 0;
+        }
+
+        #header .back img {
+            margin-top: 12px;
+            width: 14px;
+        }
+
+        /*
+            main content
+        */
+        .main {
+            display: none;
+            margin-bottom: 3em;
+        }
+
+        /* h5 && wechat */
+        .main-other {
+            margin-bottom: 64px;
+        }
+
+        /*
+            author info
+        */
+        #m-fork {
+            padding: 10px 10px 0;
+        }
+
+        #m-fork, article, .m-comment {
+            background: white;
+        }
+
+        #m-fork .avatar {
+            border-radius: 50%;
+            width: 36px;
+            vertical-align: middle;
+        }
+
+        #m-fork .author .level {
+            margin: 0 0 -12px -16px;
+            width: 15px;
+        }
+
+        #m-fork .author .name {
+            margin-left: 8px;
+        }
+
+        #m-fork .fork {
+            margin-top: 4px;
+            width: 5em;
+            min-width: 60px;
+        }
+
+        #m-fork .forked {
+            background: #E5E5E5;
+            color: #C2C2C2;
+        }
+
+        #m-fork .forkBtn {
+            width: 100%;
+            font-size: inherit;
+            background: #0087FB;
+            padding: 7px 10px;
+            color: white;
+            border-width: 0;
+            border-radius: 2em;
+        }
+
+        /*
+            article
+        */
+        article {
+            padding: 10px;
+        }
+
+        article header {
+            word-wrap: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            font-size: 1.428em;
+            overflow: hidden;
+            font-weight: bold;
+        }
+
+        article .articleInfo {
+            margin: 6px 0 10px;
+            color: #999999;
+        }
+
+        .articleInfo > span {
+            font-size: .9em;
+        }
+
+        .articleInfo .numGood {
+            margin: 0 15px 0 5px;
+        }
+
+        .articleInfo .numComments {
+            margin-left: 5px;
+        }
+
+        article .articleInfo img {
+            margin-right: .5em;
+            width: 1em;
+        }
+
+        .articleInfo .date {
+            margin: 0 10px 0 20px;
+        }
+
+        .articleInfo .tag {
+            vertical-align: middle;
+            color: white;
+            border-radius: .3em;
+            padding: 2px 3px 1px;
+        }
+
+        article .articleImg:first-child {
+            margin-top: 10px;
+        }
+
+        article .articleImg img {
+            width: 100%;
+        }
+
+        .articleContent p {
+            word-wrap: break-word;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        /*
+            comment
+        */
+        .m-comment {
+            margin-top: 10px;
+        }
+
+        .m-comment .comment-list {
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .m-comment .comment-list .level {
+            width: 1em;
+            left: 1em;
+            bottom: -0.2em;
+        }
+
+        .m-comment .comment-title {
+            height: 2.2em;
+            line-height: 2.2em;
+            padding-left: 10px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .m-comment .comment-title i {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .comment-list dd {
+            padding: 10px 0;
+            width: 100%;
+            display: block;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .comment-list dd:first-child {
+            border-top: none;
+        }
+
+        .comment-list .comment-info i {
+            margin-left: 5px;
+        }
+
+        .comment-list .avatar {
+            width: 2em;
+            display: block;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+
+        .comment-list dd .right {
+            width: 100%;
+            padding-left: 2.5em;
+        }
+
+        .comment-info .comment-name {
+            width: 50%;
+        }
+
+        .zan {
+            color: #999999;
+        }
+
+        .comment-name .name {
+            max-width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .comment-name .time {
+            color: #999;
+            font-size: .785em;
+        }
+
+        .comment-list .comment-text {
+            width: 100%;
+            display: block;
+            clear: both;
+            padding: 5px 0 0;
+            color: #202020;
+        }
+
+        .comment-content {
+            font-size: 1.07em;
+        }
+
+        .comment-content img, .reply-comment img {
+            display: block;
+        }
+
+        .m-comment .more {
+            border-top: 1px solid #e5e5e5;
+            text-align: center;
+            color: #C2C2C2;
+            padding: 6px 0;
+        }
+
+        .post-comment {
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            height: 3em;
+            line-height: 3em;
+            background: #F8F9FB;
+        }
+
+        .post-comment span {
+            width: 66%;
+            height: 2.15em;
+            line-height: 2.15em;
+            margin: 0 4.5%;
+            border-radius: 5px;
+            border-width: 1px;
+            text-indent: 10px;
+            vertical-align: middle;
+            background: #FFF;
+            color: #C2C2C2;
+        }
+
+        .post-comment i:last-child {
+            margin-left: 2%;
+        }
+
+        .post-comment .more, .post-comment .goodfor {
+            color: #999;
+        }
+
+        .post-comment .has-goodfor {
+            color: #0087FB;
+        }
+
+        /*
+            toast
+        */
+        .m-toast {
+            position: absolute;
+            height: 68px;
+            background-size: cover;
+            left: 50%;
+            background-image: url("images/toast-bg2.png");
+            width: 200px;
+            -webkit-transform: translateX(-50%);
+            -moz-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            -o-transform: translateX(-50%);
+            transform: translateX(-50%);
+        }
+
+        .m-toast div {
+            display: inline-block;
+            text-align: center;
+            height: 60px;
+        }
+
+        .m-toast span {
+            font-size: 14px;
+            color: #FFFFFE;
+            padding: 0 17.5px;
+        }
+
+        .toast-self {
+            background-image: url("images/toast-bg.png");
+            width: 132px;
+            height: 72px;
+        }
+
+        .reply-comment {
+            margin-top: 8px;
+            padding: 9px;
+            background: #F3F3F3;
+            border: 1px solid #e5e5e5;
+        }
+
+        /*
+            wechat share footer
+        */
+        .new-article-share-footer {
+            width: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            height: 64px;
+            border-top: 1px solid #e5e5e5;
+            -moz-box-shadow: 0 0 6px rgba(0, 0, 0, .06);
+            -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, .06);
+            box-shadow: 0 0 6px rgba(0, 0, 0, .06);
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            padding: 10px 16px;
+        }
+
+        .new-article-share-footer .left-us-show .pic {
+            width: 44px;
+            height: 44px;
+            display: block;
+            float: left;
+            overflow: hidden;
+            -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+            -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        .new-article-share-footer .left-us-show .us-info {
+            width: 100%;
+            padding-left: 54px;
+            color: white;
+        }
+
+        .new-article-share-footer .left-us-show .us-info h4 {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .new-article-share-footer .left-us-show .us-info p {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .new-article-share-footer .open-app-btn {
+            width: 90px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            color: #0087FB;
+            background-color: white;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            margin-top: 7px;
+        }
+
+        /*
+            mask
+        */
+        .m-mask {
+            position: fixed;
+            z-index: 1;
+            opacity: 0.7;
+            background: #2C2D46;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /*
+            dialog
+        */
+        .m-dialog, .m-originImg {
+            position: fixed;
+            z-index: 2;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .m-dialog {
+            width: 80%;
+            background: rgba(248, 248, 248, 60);
+            text-align: center;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+
+        .m-dialog p {
+            border-bottom: 1px solid #000;
+            height: 80px;
+            line-height: 80px;
+        }
+
+        .m-dialog button {
+            background: rgba(248, 248, 248, 60);
+            border: none;
+            font-size: 18px;
+            width: 49%;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .m-dialog .cancel {
+            color: #666;
+            border-bottom-left-radius: 5px;
+        }
+
+        .m-dialog .download {
+            border-bottom-right-radius: 5px;
+            border-left: 1px solid #000;
+        }
+
+        .download a {
+            color: #037AFF;
+        }
+
+        .m-originImg {
+            width: 100%;
+        }
+
+        .m-originImg img {
+            width: 100%;
+            display: inherit;
+        }
+
+        /*
+            report
+        */
+        .m-report {
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            z-index: 2;
+            background: white;
+            bottom: 0;
+        }
+
+        .m-report .report {
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .m-report p {
+            font-size: 18px;
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .s-blue {
+            color: #0087FB;
+        }
+
+        /*
+            no exist
+        */
+        .err-container {
+            display: none;
+            text-align: center;
+            margin-top: 130px;
+        }
+
+        .err-container img {
+            width: 150px;
+        }
+
+        .err-container p {
+            margin-top: 30px;
+            color: #666666;
+        }
+
+        /*
+            function
+        */
+        .f-fl {
+            float: left;
+        }
+
+        .f-fr {
+            float: right;
+        }
+
+        .f-pr {
+            position: relative;
+        }
+
+        .f-pa {
+            position: absolute;
+        }
+
+        .f-ib {
+            display: inline-block;
+        }
+
+        .f-cb {
+            *zoom: 1;
+        }
+
+        .f-cb:after {
+            clear: both;
+            content: ".";
+            display: block;
+            height: 0;
+            visibility: hidden;
+        }
+
+        /*
+            iconfont
+        */
+        .s-goodforcopy:before, .s-goodfor2:before, .s-more:before {
+            font-size: 2.15em;
+            vertical-align: middle;
+        }
+
+        .s-numcomments:before {
+            vertical-align: middle;
+        }
+
+        .s-reply, .s-copy, .s-report, .s-dele {
+            line-height: 1;
+            display: block;
+            padding: 10px 0 5px;
+        }
+
+        .s-reply:before, .s-copy:before, .s-report:before, .s-dele:before {
+            font-size: 16px;
+            color: #FFFFFE;
+        }
+
+        .s-seemore:before {
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        /*
+            media query ipad
+        */
+        @media only screen
+        and (min-device-width: 768px)
+        and (max-device-width: 1024px) {
+            body {
+                font-size: 18px;
+            }
+
+            .post-comment span {
+                width: 76%;
+            }
+
+            .s-reply, .s-copy, .s-report, .s-dele {
+                padding: .5em 0 .1em;
+            }
+        }
+
+    </style>
+</head>
+
+<body id="container" @touchmove="preventScroll">
+<header id="header" v-if="env == 'h5'">
+    <a href="javascript:history.back(-1)" class="back"><img src="http://media.winbaoxian.com/static/Activity/back.png"></a><span
+        id="invidationTitle">帖子详情</span>
+</header>
+<div class="main" :class="{ 'main-other' : env !== 'app' }">
+    <div id="m-fork" class="f-cb f-pr">
+        <div class="author f-fl f-pr">
+            <img :src="post.logoImg" alt="" class="avatar" v-if="post.logoImg">
+            <img src="images/default-avatar.png" alt="" class="avatar" v-else>
+            <img :src="levelImg" alt="" class="level">
+            <span class="name" :class="{'s-blue': post.substituteType == 2}">{{ post.userName }}</span>
+        </div>
+        <div class="f-fr fork" v-if="env === 'app'">
+            <template v-if="post.substituteType != 0">
+                <button class="forkBtn" @click="followerAuthor(post.hostUuid)" v-if="!isFocus">+ 关注</button>
+                <button class="forkBtn forked" v-else>已关注</button>
+            </template>
+        </div>
+    </div>
+    <article>
+        <header>{{ post.title }}</header>
+        <div class="articleInfo">
+            <span class="tag" :style=" { background:'#' + post.tagColor } "
+                  v-if="post.tag">{{ post.tag }}</span><span
+                class="date">{{ post.createTime }}</span><i class="s-dianzan"></i><span
+                class="numGood">{{ post.supportCount }}</span><i class="s-numcomments"></i><span
+                class="numComments">{{ post.commentCount }}</span>
+        </div>
+        <div class="articleContent">
+            <p v-html="post.artContent"></p>
+            <div class="articleImg" v-for="img in articleImgs">
+                <img :src="img" alt="">
+            </div>
+        </div>
+    </article>
+    <div class="m-comment hot" v-if="hotComments.length">
+        <div class="comment-title"><i class="s-comments s-blue"></i>精彩评论</div>
+        <dl class="comment-list">
+            <dd v-for="comment in hotComments" track-by="$index" v-touch:press="onPress(comment, $event,'hot')"
+                v-touch:tap="onTap">
+                <div class="left f-fl f-pr">
+                    <img v-if="comment.logoImg" :src="comment.logoImg" alt="" class="avatar">
+                    <img src="images/default-avatar.png" alt="" class="avatar" v-else>
+                    <img v-if="comment.level" :src="'images/v' + comment.level + '.png'" alt="" class="f-pa level">
+                </div>
+                <div class="right">
+                    <div class="comment-info">
+                        <div class="comment-name f-fl">
+                            <p class="name" :class="{'s-blue': comment.substituteType == 2}">{{ comment.userName }}</p>
+                            <span class="time">{{ comment.commentShowTime }}</span>
+                        </div>
+                        <div class="f-fr zan" v-if="env == 'app'" :class="{ 's-blue':comment.hasSupport }">
+                            {{ comment.supportCount }}
+                            <i class="s-dianzan" @click="likeComment(comment)"
+                               :class="{'s-dianzan-dianji':comment.hasSupport }"></i>
+                        </div>
+                        <div class="zan f-fr" v-else>
+                            {{ comment.supportCount }}
+                            <i class="s-dianzan" @click="toggleDownload"></i>
+                        </div>
+                    </div>
+                    <div class="comment-text">
+                        <div class="comment-content">
+                            <span v-if="comment.replyCommentId">回复<span class="reply-username s-blue">@{{ comment.replyUserName }}</span>:</span>
+                            {{ comment.commentContent }}
+                            <img :src="comment.thumbnailsImgUrl" alt=""
+                                 @click="toggleOriginImg(comment.imgUrl)">
+                        </div>
+                        <template v-if="comment.replyCommentId">
+                            <div class="reply-comment" v-if="comment.replyCommentContent || comment.replyImgUrl">
+                                <span class="reply-username s-blue">{{ comment.replyUserName }}</span><span
+                                    class="reply-content">:{{ comment.replyCommentContent }}</span>
+                                <img :src="comment.replyThumbnailsImgUrl" alt=""
+                                     @click="toggleOriginImg(comment.replyImgUrl
+)">
+                            </div>
+                            <div class="reply-comment" v-else>该评论被删除，当前无法查看</div>
+                        </template>
+                    </div>
+                </div>
+            </dd>
+            <div class="m-toast" :class="{'toast-self': isOwn }" :style="{ bottom : toastPos + 'px' }"
+                 v-show="isShowHotOpt && env == 'app'" v-cloak>
+                <div v-if="!isOwn" @click="replyComment"><i class="s-reply"></i><span>回复</span></div>
+                <div><i class="s-copy" @click="copyToClipboard"></i><span>复制</span></div>
+                <div v-if="isOwn" @click="delComment"><i class="s-dele"></i><span>删除</span></div>
+                <div v-else @click="reportComment"><i class="s-report"></i><span>举报</span></div>
+
+            </div>
+        </dl>
+        <template v-if="hotComments.length >= 2">
+            <div class="more" @click="toggleDownload" v-if="env !== 'app'">点击查看更多精彩评论<i class="s-seemore"></i></div>
+            <template v-else>
+                <div class="more" v-if="!hasLoadedAll" @click="loadMore">击查看更多精彩评论<i class="s-seemore"></i></div>
+                <div class="more" v-else>已加载全部精彩评论</div>
+            </template>
+        </template>
+    </div>
+    <div class="m-comment normal"  v-if="comments.length">
+        <div class="comment-title"><i class="s-comments s-blue"></i>所有评论</div>
+        <dl class="comment-list">
+            <dd v-for="comment in comments" track-by="$index" v-touch:press="onPress(comment,$event,'normal')"
+                v-touch:tap="onTap">
+                <div class="left f-fl f-pr">
+                    <img v-if="comment.logoImg" :src="comment.logoImg" alt="" class="avatar">
+                    <img src="images/default-avatar.png" alt="" class="avatar" v-else>
+                    <img v-if="comment.level" :src="'images/v' + comment.level + '.png'" alt="" class="f-pa level">
+                </div>
+                <div class="right">
+                    <div class="comment-info">
+                        <div class="comment-name f-fl">
+                            <p class="name" :class="{'s-blue': comment.substituteType == 2}">{{ comment.userName }}</p>
+                            <span class="time">{{ comment.commentShowTime }}</span>
+                        </div>
+                        <div class="f-fr zan" v-if="env === 'app'" :class="{'s-blue':comment.hasSupport}">
+                            {{ comment.supportCount }}
+                            <i class="s-dianzan" @click="likeComment(comment)"
+                               :class="{'s-dianzan-dianji':comment.hasSupport }"></i>
+                        </div>
+                        <div class="zan f-fr" v-else>
+                            {{ comment.supportCount }}
+                            <i class="s-dianzan" @click="toggleDownload"></i>
+                        </div>
+                    </div>
+                    <div class="comment-text">
+                        <div class="comment-content">
+                            <span v-if="comment.replyCommentId">回复<span class="reply-username s-blue">@{{ comment.replyUserName }}</span>:</span>
+                            {{ comment.commentContent }}
+                            <img :src="comment.thumbnailsImgUrl" alt=""
+                                 @click="toggleOriginImg(comment.imgUrl)">
+                        </div>
+                        <template v-if="comment.replyCommentId">
+                            <div class="reply-comment" v-if="comment.replyCommentContent || comment.replyImgUrl">
+                                <span class="reply-username s-blue">{{ comment.replyUserName }}</span><span
+                                    class="reply-content">:{{ comment.replyCommentContent }}</span>
+                                <img :src="comment.replyThumbnailsImgUrl" alt=""
+                                     @click="toggleOriginImg(comment.replyImgUrl
+)">
+                            </div>
+                            <div class="reply-comment" v-else>该评论被删除，当前无法查看</div>
+                        </template>
+                    </div>
+                </div>
+            </dd>
+            <div class="m-toast" :class="{'toast-self':isOwn }" :style="{ bottom : toastPos + 'px' }"
+                 v-show="isShowOpt && env == 'app'" v-cloak>
+                <div v-if="!isOwn" @click="replyComment"><i class="s-reply"></i><span>回复</span></div>
+                <div><i class="s-copy" @click="copyToClipboard"></i><span>复制</span></div>
+                <div v-if="isOwn" @click="delComment"><i class="s-dele"></i><span>删除</span></div>
+                <div v-else @click="reportComment"><i class="s-report"></i><span>举报</span></div>
+
+            </div>
+        </dl>
+        <template v-if="comments.length >= 2">
+            <div class="more" v-if="env == 'app'" @click="goToAllReplies">点击查看所有评论<i class="s-seemore"></i></div>
+            <div class="more" v-else @click="toggleDownload">点击查看所有评论<i class="s-seemore"></i></div>
+        </template>
+    </div>
+</div>
+
+<div class="post-comment" v-show="env === 'app'" v-cloak>
+    <span @click="optPost(2)" class="f-ib">请输入你想说的话</span>
+    <i class="s-goodforcopy goodfor" v-if="!post.hasSupport" @click="optPost(1)"></i>
+    <i class="s-goodfor2 goodfor has-goodfor" @click="optPost(1)" v-else></i>
+    <i class="s-more more" @click="toggleReport"></i>
+</div>
+<div class="m-report" v-show="isShowReport" v-cloak>
+    <p class="report" @click="optPost(0)">举报</p>
+    <p class="cancel" @click="toggleReport">取消</p>
+</div>
+<div class="new-article-share-footer c-control" v-show="env != 'app'" v-cloak>
+    <div class="left-us-show f-fl">
+        <img src="http://media.winbaoxian.com/pic/app-article/logo.png" class="pic">
+        <div class="us-info">
+            <h4>微易保险师</h4>
+            <p>为保险人而生</p>
+        </div>
+    </div>
+    <div class="open-app-btn f-fr"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.winbaoxian.wybx">立即打开</a></div>
+</div>
+<div class="m-mask" v-show="isShowReport || isShowDownload || isShowOriginImg" v-cloak>
+</div>
+<div class="m-dialog" v-show="isShowDownload" v-cloak>
+    <p>下载保险师App,查看更多</p>
+    <button class="cancel" @click="toggleDownload">再考虑</button>
+    <button class="download"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.winbaoxian.wybx">立即下载</a></button>
+</div>
+<div class="m-originImg" v-show="isShowOriginImg" v-cloak>
+    <img :src="originImg" alt="" @click="toggleOriginImg()">
+</div>
+<vue-toast v-ref:toast></vue-toast>
+<div class="err-container">
+    <img src="images/no2.png" alt="">
+    <p>该帖子已被删除，无法查看</p>
+</div>
+</body>
+<script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script src="//res.winbaoxian.com/legacy/bridge/app-bridge-addon.min-13a69082.js"></script>
+<script src="//cdn.bootcss.com/es6-promise/3.2.2/es6-promise.min.js"></script>
+<script src="//cdn.bootcss.com/fetch/1.0.0/fetch.min.js"></script>
+<script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
+<script src="//cdn.bootcss.com/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="vue-touch.min.js"></script>
+<script src="vue-toast.min.js"></script>
+<script src="//app.winbaoxian.com/static/js/base-config.js"></script>
+<script src="//res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+      const baseUrl = 'http://test.winbaoxian.com/',
+//    const baseUrl = location.origin,
+            fetchParms = {
+//                headers: {
+//                    "Content-Type": "application/json"
+//                },
+//                credentials: "same-origin",
+//                method: "GET",
+            };
+    var BASE = window.BASE,
+//            default wechat two time share info
+            wcShareCfg = {
+                title: 'test',
+                link: 'test',
+                imgUrl: 'test',
+                desc: 'test',
+            },
+            uiData = {
+                env: getEnv(), // 页面外部环境
+                articleImgs: [],
+                hotComments: [],
+                comments: [],
+                currentComment: {}, // 长按选中的评论
+                post: {},
+                originImg: '',
+                toastPos: 'none',   //  操作栏位置
+                isShowHotOpt: false,
+                isShowOpt: false,
+                isShowReport: false,
+                isShowDownload: false,
+                isShowOriginImg: false,
+                isFocus: false,
+                isOwn: false,
+                hasLoadedAll: false,
+            };
+    BASE.initWechatShare(wcShareCfg);
+    function getShareInfo() {
+        return {
+            title: uiData.post.title,
+            content: '700W保险师都在玩！保险师职场，带给你不一样的学习体验。有趣又有料，还不快来！',
+            shareUrl: window.location.href,
+            imgUrl: 'http://img.winbaoxian.com/shequ/share.jpeg'
+        }
+    }
+    function getEnv() {
+        var env;
+        if (appBridge.isApp()) {
+            env = 'app';
+        } else if (appBridge.isWechat()) {
+            env = 'wechat';
+        } else {
+            env = 'h5';
+        }
+        return env;
+    }
+    function checkStatus(response) {
+        if (response.status >= 200 && response.status < 300) {
+            return response
+        } else {
+            var error = new Error(response.statusText)
+            error.response = response
+            throw error
+        }
+    }
+    function parseJSON(response) {
+        return response.json()
+    }
+    function convertToNum(string) {
+        return parseInt(string);
+    }
+    function getUrlParam(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+    function loadData(data) {
+        uiData.comments = data.commonCommentList;
+        uiData.hotComments = data.wonderfulCommentList;
+        uiData.post = data.newsDetail[0];
+        uiData.isFocus = data.isFocus;
+        if (uiData.post.imgUrl) {
+            uiData.articleImgs = uiData.post.imgUrl.split(",");
+        }
+        if (uiData.post.userName.length > 10) {
+            uiData.post.userName = uiData.post.userName.slice(0, 11) + '...';
+        }
+//        将\n转成<br />
+        uiData.post.artContent = uiData.post.artContent.replace(/[\n]/g, '<br />')
+    }
+    function initPage() {
+        fetch(baseUrl + '/community/getCommunityNewsDetail?newsId=' + getUrlParam("id"), fetchParms).then(checkStatus)
+                .then(parseJSON)
+                .then(function (response) {
+                    if (response.success) {
+//                        数据返回后显示内容
+                        document.getElementsByClassName('main')[0].style.display = "block";
+                        loadData(response.data)
+                        initVue();
+                        wcShareCfg = {
+                            title: uiData.post.title,
+                            link: window.location.href,
+                            imgUrl: 'http://img.winbaoxian.com/shequ/share.jpeg',
+                            desc: '700W保险师都在玩！保险师职场，带给你不一样的学习体验。有趣又有料，还不快来！'
+                        };
+                        BASE.initWechatShare(wcShareCfg);
+                    } else {
+//                        请求失败显示错误信息
+                        document.getElementsByClassName('err-container')[0].style.display = "block";
+                    }
+                })
+    }
+    function initVue() {
+        var vm = new Vue({
+            el: '#container',
+            data: uiData,
+            components: {
+                'vue-toast': window.vueToasts
+            },
+            computed: {
+                levelImg: function () {
+                    if (this.post.level)
+                        return 'images/v' + this.post.level + '.png';
+                },
+            },
+            methods: {
+                refresh: function () {
+                    fetch(baseUrl + '/community/getCommunityNewsDetail?newsId=' + getUrlParam("id"), fetchParms).then(checkStatus)
+                            .then(parseJSON)
+                            .then(function (response) {
+                                if (response.success) {
+                                    loadData(response.data)
+                                }
+
+                            })
+                },
+
+                optPost: function (type) {
+                    this.hideOptMenu();
+                    if (!type) {
+                        this.toggleReport();
+                    }
+                    var parms, id = convertToNum(getUrlParam("id")), opt = {
+                        0: "communityReportAbuse", // 举报
+                        1: "communityLike",  // 点赞
+                        2: "communityComment" // 评论
+                    }[type];
+                    parms = type == 2 ? {
+                        newsId: id
+                    } : {
+                        targetType: 'post',
+                        targetId: id
+                    };
+                    appBridge[opt](parms).then(function () {
+                        if (type == 1 && !this.post.hasSupport) {
+                            this.post.hasSupport = true;
+                            this.refresh();
+                        }
+                        if (type == 2) {
+                            this.refresh();
+                        }
+                    }.bind(this)).catch(function (e) {
+                    });
+                },
+                replyComment: function () {
+                    this.hideOptMenu();
+                    appBridge.communityComment({
+                        newsId: convertToNum(getUrlParam("id")),
+                        replyId: this.currentComment.id,
+                        atWhom: this.currentComment.name
+                    }).then(function () {
+                        this.refresh();
+                    }.bind(this)).catch(function (e) {
+                    });
+                },
+                reportComment: function () {
+                    this.hideOptMenu();
+                    appBridge.communityReportAbuse({
+                        targetType: 'reply',
+                        targetId: this.currentComment.id
+                    }).then(function () {
+                    }).catch(function (e) {
+                    });
+                },
+                delComment: function () {
+                    this.hideOptMenu();
+                    appBridge.communityDelete({
+                        newsId: convertToNum(getUrlParam("id")),
+                        replyId: this.currentComment.id
+                    }).then(function () {
+                        this.refresh();
+                    }.bind(this)).catch(function (e) {
+                    });
+                },
+                likeComment: function (comment) {
+                    appBridge.communityLike({
+                        targetType: 'reply',
+                        targetId: comment.commentId
+                    }).then(function () {
+                        if (!comment.hasSupport) {
+                            comment.supportCount++;
+                            comment.hasSupport = true;
+                        }
+                    }).catch(function (e) {
+                    });
+                },
+                copyToClipboard: function () {
+                    var copyString = this.currentComment.copyString;
+                    if (!copyString) {
+                        this.showToast("复制内容为空");
+                    } else {
+                        appBridge.copyString(copyString);
+                    }
+                    this.hideOptMenu();
+                },
+                onPress: function (comment, event, type) {
+                    var target = event.target;
+
+                    /*
+                     主副评论作区分，需求方已去除
+                     isReply = ['reply-comment', 'reply-username', 'reply-content'].some(function (name) {
+                     return target.classList.contains(name);
+                     });
+                     if (comment.replyCommentId) {
+                     if (!comment.replyCommentContent && !comment.replyImgUrl) {
+                     this.showToast("该评论已被删除，无法操作");
+                     this.hideOptMenu();
+                     return;
+                     }
+
+                     }
+                     */
+                    this.toastPos = document.getElementsByClassName(type)[0].getBoundingClientRect().bottom - event.center.y - 20;
+                    if (type == 'normal') {
+                        this.isShowOpt = true;
+                    } else {
+                        this.isShowHotOpt = true;
+                    }
+                    this.isOwn = comment.isOwn;
+                    this.currentComment.id = comment.commentId;
+                    this.currentComment.copyString = comment.commentContent;
+                    this.currentComment.name = comment.userName;
+                },
+                onTap: function () {
+                    if (this.isShowHotOpt || this.isShowOpt) {
+                        this.hideOptMenu();
+                    }
+                },
+                followerAuthor: function (uuid) {
+                    if (!uuid) {
+                        this.showToast("出错了:P，未知的讲师信息。");
+                    } else {
+                        appBridge.followLecturer(uuid);
+                    }
+                    appBridge.onFollowLecturerDone(function () {
+                        this.isFocus = !this.isFocus;
+                    }.bind(this))
+                },
+                loadMore: function () {
+                    if (this.hotComments) {
+                        var timestamp = this.hotComments[this.hotComments.length - 1].commentTime;
+                        fetch(baseUrl + '/community/getCommunityCommentMore?newsId=' + getUrlParam("id") + '&timestamp=' + timestamp + '&isWonderful=true', fetchParms).then(checkStatus)
+                                .then(parseJSON)
+                                .then(function (response) {
+                                    if (response.success) {
+                                        var data = response.data;
+                                        if (data.isFinal) {
+                                            uiData.hasLoadedAll = true;
+                                        } else {
+                                            uiData.hotComments = uiData.hotComments.concat(data.commonCommentList);
+                                        }
+                                    }
+                                })
+                    }
+
+                },
+                preventScroll: function () {
+                    if (this.isShowOriginImg || this.isShowDownload || this.isShowReport) {
+                        event.preventDefault();
+                    }
+                },
+                goToAllReplies: function () {
+                    appBridge.gotoNativeView({
+                        type: "communityAllReplies",
+                        data: {
+                            newsId: convertToNum(getUrlParam("id"))
+                        }
+                    })
+                },
+                toggleOriginImg: function () {
+                    if (arguments.length > 0) {
+                        this.originImg = arguments[0];
+                    }
+                    this.isShowOriginImg = !this.isShowOriginImg;
+                },
+                toggleReport: function () {
+                    this.isShowReport = !this.isShowReport;
+                },
+                toggleDownload: function () {
+                    this.isShowDownload = !this.isShowDownload;
+                },
+                showToast: function (info) {
+                    var toast = this.$refs.toast;
+                    toast.setOptions({
+                        position: 'right top',
+                        maxToasts: 5
+                    });
+                    toast.showToast(info, {
+                        timeLife: 3000
+                    });
+                },
+                hideOptMenu: function () {
+                    this.isShowHotOpt = false;
+                    this.isShowOpt = false;
+                }
+            },
+            ready: function () {
+                appBridge.notifyShareInfo({
+                    async: true,
+                    infoFn: getShareInfo
+                });
+                appBridge.onSharingDone(function (sharingResult) {
+                });
+            }
+        })
+    }
+    initPage();
+</script>
+
+</html>
