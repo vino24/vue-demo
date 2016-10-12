@@ -363,7 +363,11 @@
             background: #F3F3F3;
             border: 1px solid #e5e5e5;
         }
-
+        .m-guide {
+            z-index: 2;
+            bottom: 80px;
+            position: fixed;
+        }
         /*
             wechat share footer
         */
@@ -565,7 +569,9 @@
         .f-ib {
             display: inline-block;
         }
-
+        .f-hide {
+            display: none;
+        }
         .f-cb {
             *zoom: 1;
         }
@@ -803,6 +809,10 @@
     <p class="report" @click="optPost(0)">举报</p>
     <p class="cancel" @click="toggleReport">取消</p>
 </div>
+<div class="m-guide f-hide" @click="nextStep">
+    <img v-show="!isStepNext" src="images/step1.png" alt="" class="step1" style="width: 90%;margin-left: 5%">
+    <img src="images/step2.png" alt="" class="step2" style="width: 80%;margin-left: 10%" v-else>
+</div>
 <div class="new-article-share-footer c-control" v-show="env != 'app'" v-cloak>
     <div class="left-us-show f-fl">
         <img src="http://media.winbaoxian.com/pic/app-article/logo.png" class="pic">
@@ -813,7 +823,7 @@
     </div>
     <div class="open-app-btn f-fr"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.winbaoxian.wybx">立即打开</a></div>
 </div>
-<div class="m-mask" v-show="isShowReport || isShowDownload || isShowOriginImg" v-cloak>
+<div class="m-mask" v-show="isShowReport || isShowDownload || isShowOriginImg || !hasGuide" v-cloak>
 </div>
 <div class="m-dialog" v-show="isShowDownload" v-cloak>
     <p>下载保险师App,查看更多</p>
@@ -866,6 +876,8 @@
                 post: {},
                 originImg: '',
                 toastPos: 'none',   //  操作栏位置
+                hasGuide: true,
+                isStepNext: false,
                 isShowHotOpt: false,
                 isShowOpt: false,
                 isShowReport: false,
@@ -932,6 +944,16 @@
         uiData.post.artContent = uiData.post.artContent.replace(/[\n]/g, '<br />')
     }
     function initPage() {
+        fetch(baseUrl + '/community/getGuideStatus', fetchParms).then(checkStatus)
+                .then(parseJSON)
+                .then(function (response) {
+                    if(response.success) {
+                        uiData.hasGuide = response.data.hasGuide;
+                        if(uiData.hasGuide == false) {
+                            document.getElementsByClassName('m-guide')[0].style.display = "block";
+                        }
+                    }
+                })
         fetch(baseUrl + '/community/getCommunityNewsDetail?newsId=' + getUrlParam("id"), fetchParms).then(checkStatus)
                 .then(parseJSON)
                 .then(function (response) {
@@ -1116,6 +1138,14 @@
                                 })
                     }
 
+                },
+                nextStep: function () {
+                    if(!this.isStepNext) {
+                        this.isStepNext = true;
+                    } else {
+                        document.getElementsByClassName('m-guide')[0].style.display = "none";
+                        this.hasGuide = true;
+                    }
                 },
                 preventScroll: function () {
                     if (this.isShowOriginImg || this.isShowDownload || this.isShowReport) {
