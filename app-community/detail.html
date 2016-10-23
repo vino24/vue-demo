@@ -677,8 +677,7 @@
     <div class="m-comment hot" v-if="hotComments.length">
         <div class="comment-title"><i class="s-comments s-blue"></i>精彩评论</div>
         <dl class="comment-list">
-            <dd v-for="comment in hotComments" track-by="$index" v-touch:press="onPress(comment, $event,'hot')"
-                v-touch:tap="onTap">
+            <dd v-for="comment in hotComments" track-by="$index" @click="onPress(comment, $event,'hot')" @touchmove="onTap">
                 <div class="left f-fl f-pr">
                     <img v-if="comment.logoImg" :src="comment.logoImg" alt="" class="avatar">
                     <img src="images/default-avatar.png" alt="" class="avatar" v-else>
@@ -740,8 +739,8 @@
     <div class="m-comment normal"  v-if="comments.length">
         <div class="comment-title"><i class="s-comments s-blue"></i>所有评论</div>
         <dl class="comment-list">
-            <dd v-for="comment in comments" track-by="$index" v-touch:press="onPress(comment,$event,'normal')"
-                v-touch:tap="onTap">
+            <dd v-for="comment in comments" track-by="$index" @click="onPress(comment,$event,'normal')"
+                @touchmove="onTap">
                 <div class="left f-fl f-pr">
                     <img v-if="comment.logoImg" :src="comment.logoImg" alt="" class="avatar">
                     <img src="images/default-avatar.png" alt="" class="avatar" v-else>
@@ -809,10 +808,9 @@
     <p class="report" @click="optPost(0)">举报</p>
     <p class="cancel" @click="toggleReport">取消</p>
 </div>
-<div class="m-guide f-hide" @click="nextStep">
-    <img v-show="!isStepNext" src="images/step1.png" alt="" class="step1" style="width: 90%;margin-left: 5%">
-    <img src="images/step2.png" alt="" class="step2" style="width: 80%;margin-left: 10%" v-else>
-</div>
+<div class="m-guide f-hide" @click="nextStep" v-if="!hasGuide">
+    <img v-show="!isStepNext" src="" alt="" class="step1" style="width: 90%;margin-left: 5%">
+    <img src="" alt="" class="step2" style="width: 70%;margin-left: 15%" v-else>
 <div class="new-article-share-footer c-control" v-show="env != 'app'" v-cloak>
     <div class="left-us-show f-fl">
         <img src="http://media.winbaoxian.com/pic/app-article/logo.png" class="pic">
@@ -841,11 +839,8 @@
 </body>
 <script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
 <script src="//res.winbaoxian.com/legacy/bridge/app-bridge-addon.min-13a69082.js"></script>
-<script src="//cdn.bootcss.com/es6-promise/3.2.2/es6-promise.min.js"></script>
 <script src="//cdn.bootcss.com/fetch/1.0.0/fetch.min.js"></script>
 <script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
-<script src="//cdn.bootcss.com/hammer.js/2.0.8/hammer.min.js"></script>
-<script src="vue-touch.min.js"></script>
 <script src="vue-toast.min.js"></script>
 <script src="//app.winbaoxian.com/static/js/base-config.js"></script>
 <script src="//res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -930,6 +925,12 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
     function loadData(data) {
+        uiData.hasGuide = data.hasGuide;
+        if(uiData.hasGuide == false) {
+            var guide = document.getElementsByClassName('m-guide')[0];
+            guide.style.display = "block";
+            guide.children[0].src = "http://img.winbaoxian.com/autoUpload/activity/step1_ddc5d75877.png";
+            guide.children[1].src = "http://img.winbaoxian.com/autoUpload/activity/step1_1595b4a173.png";
         uiData.comments = data.commonCommentList;
         uiData.hotComments = data.wonderfulCommentList;
         uiData.post = data.newsDetail[0];
@@ -944,16 +945,6 @@
         uiData.post.artContent = uiData.post.artContent.replace(/[\n]/g, '<br />')
     }
     function initPage() {
-        fetch(baseUrl + '/community/getGuideStatus', fetchParms).then(checkStatus)
-                .then(parseJSON)
-                .then(function (response) {
-                    if(response.success) {
-                        uiData.hasGuide = response.data.hasGuide;
-                        if(uiData.hasGuide == false) {
-                            document.getElementsByClassName('m-guide')[0].style.display = "block";
-                        }
-                    }
-                })
         fetch(baseUrl + '/community/getCommunityNewsDetail?newsId=' + getUrlParam("id"), fetchParms).then(checkStatus)
                 .then(parseJSON)
                 .then(function (response) {
@@ -1095,7 +1086,7 @@
 
                      }
                      */
-                    this.toastPos = document.getElementsByClassName(type)[0].getBoundingClientRect().bottom - event.center.y - 20;
+                this.toastPos = document.getElementsByClassName(type)[0].getBoundingClientRect().bottom - event.clientY - 20;
                     if (type == 'normal') {
                         this.isShowOpt = true;
                     } else {
@@ -1148,7 +1139,7 @@
                     }
                 },
                 preventScroll: function () {
-                    if (this.isShowOriginImg || this.isShowDownload || this.isShowReport) {
+                    if(this.isShowOriginImg || this.isShowDownload || this.isShowReport || !this.hasGuide) {
                         event.preventDefault();
                     }
                 },
@@ -1199,5 +1190,4 @@
     }
     initPage();
 </script>
-
 </html>
