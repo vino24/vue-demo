@@ -704,14 +704,14 @@
                             <span v-if="comment.replyCommentId">回复<span class="reply-username s-blue">@{{ comment.replyUserName }}</span>:</span>
                             {{ comment.commentContent }}
                             <img :src="comment.thumbnailsImgUrl" alt=""
-                                 @click="toggleOriginImg(comment.imgUrl)">
+                                 @click.stop="toggleOriginImg(comment.imgUrl)">
                         </div>
                         <template v-if="comment.replyCommentId">
                             <div class="reply-comment" v-if="comment.replyCommentContent || comment.replyImgUrl">
                                 <span class="reply-username s-blue">{{ comment.replyUserName }}</span><span
                                     class="reply-content">:{{ comment.replyCommentContent }}</span>
                                 <img :src="comment.replyThumbnailsImgUrl" alt=""
-                                     @click="toggleOriginImg(comment.replyImgUrl
+                                     @click.stop="toggleOriginImg(comment.replyImgUrl
 )">
                             </div>
                             <div class="reply-comment" v-else>该评论被删除，当前无法查看</div>
@@ -767,14 +767,14 @@
                             <span v-if="comment.replyCommentId">回复<span class="reply-username s-blue">@{{ comment.replyUserName }}</span>:</span>
                             {{ comment.commentContent }}
                             <img :src="comment.thumbnailsImgUrl" alt=""
-                                 @click="toggleOriginImg(comment.imgUrl)">
+                                 @click.stop="toggleOriginImg(comment.imgUrl)">
                         </div>
                         <template v-if="comment.replyCommentId">
                             <div class="reply-comment" v-if="comment.replyCommentContent || comment.replyImgUrl">
                                 <span class="reply-username s-blue">{{ comment.replyUserName }}</span><span
                                     class="reply-content">:{{ comment.replyCommentContent }}</span>
                                 <img :src="comment.replyThumbnailsImgUrl" alt=""
-                                     @click="toggleOriginImg(comment.replyImgUrl
+                                     @click.stop="toggleOriginImg(comment.replyImgUrl
 )">
                             </div>
                             <div class="reply-comment" v-else>该评论被删除，当前无法查看</div>
@@ -829,7 +829,7 @@
     <button class="download"><a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.winbaoxian.wybx">立即下载</a></button>
 </div>
 <div class="m-originImg" v-show="isShowOriginImg" v-cloak>
-    <img :src="originImg" alt="" @click="toggleOriginImg()">
+    <img :src="originImg" alt="" @click.stop="toggleOriginImg()">
 </div>
 <vue-toast v-ref:toast></vue-toast>
 <div class="err-container">
